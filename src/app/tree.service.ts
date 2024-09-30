@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { NODO, TREE } from './helper';
+import { CsvLoaderService } from './csv-loader.service';
 
 @Injectable({
   providedIn: 'root'
@@ -24,57 +25,60 @@ export class TreeService {
       msg: "Seleccionaste Productos. ¿Qué tipo de producto necesitas info?",
       options: ['1.celulares','2.PCS','3.Tablets'],
       children: [
-        {id: 1.11, msg: "Celulares"},
-        {id: 1.12, msg: "PCS"},
-        {id: 1.13, msg: "Tablets"},
+        {id: 1.11, msg: "Celulares", children: []},
+        {id: 1.12, msg: "PCS" , children: []},
+        {id: 1.13, msg: "Tablets" , children: []},
 
 
       ]
     },
-    {id: 1.2, msg: "Seleccionaste Soporte"},
-    {id: 1.3, msg: "Seleccionaste Contactos"}
+    {id: 1.2, msg: "Seleccionaste Soporte" , children: []},
+    {id: 1.3, msg: "Seleccionaste Contactos" , children: []}
   ]
   };
 
-  constructor() { 
+  constructor(private csvLoaderService: CsvLoaderService) { 
 
     this.tree = {
       valInitial: true,
-      root: this.padre,
+      root: null,
       valFinal: false,
       
     }
 
-    this.currentNode = this.tree.root;
+    this.currentNode = null;
     this.getTreStatus();
     this.setOnRoot();
 
   }
 
-  setOnRoot(){
-    if(this.currentNode === this.tree.root){
+  async loadCsvData(csvData: string): Promise<void> {
+    try {
+      this.tree.root = await this.csvLoaderService.loadCsv(csvData);
+      this.currentNode = this.tree.root; // Establecer nodo actual
+      this.setOnRoot(); // Ahora llama a setOnRoot
+    } catch (error) {
+      console.error("Error al cargar CSV:", error);
+    }
+  }
+
+  setOnRoot() {
+    if (this.currentNode === this.tree.root && this.currentNode) {
       this.updateStack(this.currentNode);
       console.log(this.currentNode.msg);
       console.log(this.currentNode.options);
-
     }
   }
 
-  getTreStatus(): boolean{
-    if(this.tree.valInitial === true && this.currentNode){
+  getTreStatus(): boolean {
+    if (this.tree.valInitial === true && this.currentNode) {
       console.log("ARBOL ACTIVO");
       return true;
-    }
-    
-    else{
+    } else {
       console.log("ARBOL INACTIVO");
-
       return false;
-
     }
-    
   }
-
 
   navigateToChild(indexp: number, indexh: number): void {
   //VERIFICA SI TIENE OPCIONES  Y POR ENDE HIJOS
@@ -87,6 +91,8 @@ export class TreeService {
           this.getCurrentNode();
           this.showNodoData();
           if(this.isLeaf()){
+            
+            
             console.log("ESTAS EN UNA HOJA");
           }else {
             console.log("ESTAS EN UNA RAMIFICACION");
@@ -106,9 +112,9 @@ export class TreeService {
 }
 
   isLeaf(): boolean{
-    if(this.currentNode && !this.currentNode.options){
+    if(this.currentNode && this.currentNode.options?.length === 0){
       return true;
-    }else if(this.currentNode && this.currentNode.options){
+    }else if(this.currentNode && (this.currentNode.options && this.currentNode.options.length > 0)){
       return false;
     }else 
       return false;
@@ -191,6 +197,6 @@ export class TreeService {
   }
 
   getRootId(): number {
-    return this.tree.root.id;
+    return this.tree.root!.id;
   }
 }
