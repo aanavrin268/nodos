@@ -24,9 +24,16 @@ padre,1,"Hola!, bienvenido al chatbot! Elige una opción para continuar!","1.Pro
 hijo,1.1,"Seleccionaste Productos. ¿Qué tipo de producto necesitas info?","1.celulares;2.PCS;3.Tablets",1
 hijo,1.2,"Seleccionaste Soporte","",1
 hijo,1.3,"Seleccionaste Contactos","",1
-nieto,1.11,"Celulares","",1.1
+nieto,1.11,"Selecciona un tipo de celular","1.Iphone;2.Android",1.1
 nieto,1.12,"PCS","",1.1
 nieto,1.13,"Tablets","",1.1
+bisnieto,1.111,"¿Qué tipo de Iphone te interesa","1.Iphone 16;2.Iphone 15",1.11
+bisnieto,1.112, "SEleccionate Android","",1.11
+tataranieto,1.1111,"Con qué configuracion te intersa?","1.128gb;2.256gb;3.512gb",1.111
+tataranieto,1.1112,"Iphone 15","",1.111
+pentaranieto,1.11111,"Quieres el de 128gb","",1.1111
+pentaranieto,1.11112,"Quieres el de 256gb","",1.1111
+pentaranieto,1.11113,"Quieres el de 512gb","",1.1111
 
     `.trim();
 
@@ -49,7 +56,7 @@ nieto,1.23,"Ofertas en Accesorios","",1.2
     
 
     // Cargar datos desde el CSV
-    await this.service.loadCsvData(csvMenu2);
+    await this.service.loadCsvData(csvMenu);
   }
 
   getBack() {
